@@ -65,3 +65,7 @@ fastlane/screenshots
 fastlane/test_output
 
 *.xcuserstate
+
+SwiftFiles/SwiftFiles.xcodeproj/project.xcworkspace/xcuserdata/mercej81.xcuserdatad/UserInterfaceState.xcuserstate
+
+*.xcuserstate
