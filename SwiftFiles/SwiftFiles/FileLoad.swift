@@ -10,14 +10,14 @@ import Foundation
 public struct FileLoad {
     
     
-    public static func loadData(path:String, directory:NSSearchPathDirectory, subdirectory:String?) -> NSData?
+    public static func loadData(path:String, directory:FileManager.SearchPathDirectory, subdirectory:String?) -> NSData?
     {
         
-        let loadPath = buildPath(path, inDirectory: directory, subdirectory: subdirectory)
+        let loadPath = buildPath(path: path, inDirectory: directory, subdirectory: subdirectory)
         // load the file and see if it was successful
-        let data = NSFileManager.defaultManager().contentsAtPath(loadPath)
+        let data = FileManager.default.contents(atPath: loadPath)
         // Return data
-        return data
+        return data as NSData?
         
     }
     
@@ -26,12 +26,12 @@ public struct FileLoad {
     {
         
         
-        let loadPath = buildPathToTemporaryDirectory(path, subdirectory: subdirectory)
+        let loadPath = buildPathToTemporaryDirectory(path: path, subdirectory: subdirectory)
         // Save the file and see if it was successful
-        let data = NSFileManager.defaultManager().contentsAtPath(loadPath)
+        let data = FileManager.default.contents(atPath: loadPath)
         
         // Return status of file save
-        return data
+        return data as NSData?
         
         
     }
@@ -39,9 +39,9 @@ public struct FileLoad {
     
     // string methods
     
-    public static func loadString(path:String, directory:NSSearchPathDirectory, subdirectory:String?, encoding enc:NSStringEncoding = NSUTF8StringEncoding) throws -> String?
+    public static func loadString(path:String, directory:FileManager.SearchPathDirectory, subdirectory:String?, encoding enc:String.Encoding = String.Encoding.utf8) throws -> String?
     {
-        let loadPath = buildPath(path, inDirectory: directory, subdirectory: subdirectory)
+        let loadPath = buildPath(path: path, inDirectory: directory, subdirectory: subdirectory)
         
 
 
@@ -54,9 +54,9 @@ public struct FileLoad {
     }
     
     
-    public static func loadStringFromTemporaryDirectory(path:String, subdirectory:String?, encoding enc:NSStringEncoding = NSUTF8StringEncoding) throws -> String? {
+    public static func loadStringFromTemporaryDirectory(path:String, subdirectory:String?, encoding enc:String.Encoding = String.Encoding.utf8) throws -> String? {
         
-        let loadPath = buildPathToTemporaryDirectory(path, subdirectory: subdirectory)
+        let loadPath = buildPathToTemporaryDirectory(path: path, subdirectory: subdirectory)
         
 
         // Save the file and see if it was successful
@@ -71,19 +71,19 @@ public struct FileLoad {
     
     // private methods
     
-    private static func buildPath(path:String, inDirectory directory:NSSearchPathDirectory, subdirectory:String?) -> String  {
+    private static func buildPath(path:String, inDirectory directory:FileManager.SearchPathDirectory, subdirectory:String?) -> String  {
         // Remove unnecessary slash if need
-        let newPath = FileHelper.stripSlashIfNeeded(path)
+        let newPath = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: path)
         var subDir:String?
         if let sub = subdirectory {
-            subDir = FileHelper.stripSlashIfNeeded(sub)
+            subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: sub)
         }
         
         // Create generic beginning to file load path
         var loadPath = ""
         
-        if let direct = FileDirectory.applicationDirectory(directory),
-            path = direct.path {
+        if let direct = FileDirectory.applicationDirectory(directory: directory),
+            let path = direct.path {
                 loadPath = path + "/"
         }
         
@@ -99,17 +99,17 @@ public struct FileLoad {
     }
     public static func buildPathToTemporaryDirectory(path:String, subdirectory:String?) -> String {
         // Remove unnecessary slash if need
-        let newPath = FileHelper.stripSlashIfNeeded(path)
+        let newPath = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: path)
         var subDir:String?
         if let sub = subdirectory {
-            subDir = FileHelper.stripSlashIfNeeded(sub)
+            subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: sub)
         }
         
         // Create generic beginning to file load path
         var loadPath = ""
         
         if let direct = FileDirectory.applicationTemporaryDirectory(),
-            path = direct.path {
+            let path = direct.path {
                 loadPath = path + "/"
         }
         

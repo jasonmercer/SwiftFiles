@@ -8,13 +8,13 @@ import Foundation
 
 public struct FileDelete {
     
-    public static func deleteFile(path:String, directory:NSSearchPathDirectory,  subdirectory:String?) throws
+    public static func deleteFile(path:String, directory:FileManager.SearchPathDirectory,  subdirectory:String?) throws
     {
-        let deletePath = buildPath(path, inDirectory: directory, subdirectory: subdirectory)
+        let deletePath = buildPath(path: path, inDirectory: directory, subdirectory: subdirectory)
         
         // Delete the file and see if it was successful
 
-        try NSFileManager.defaultManager().removeItemAtPath(deletePath)
+        try FileManager.default.removeItem(atPath: deletePath)
         
         
         
@@ -23,11 +23,11 @@ public struct FileDelete {
     
     public static func deleteFileFromTemporaryDirectory(path:String, subdirectory:String?) throws
     {
-        let deletePath = buildPathToTemporaryDirectory(path, subdirectory: subdirectory)
+        let deletePath = buildPathToTemporaryDirectory(path: path, subdirectory: subdirectory)
         
         // Delete the file and see if it was successful
 
-        try NSFileManager.defaultManager().removeItemAtPath(deletePath)
+        try FileManager.default.removeItem(atPath: deletePath)
         
         
     }
@@ -35,16 +35,16 @@ public struct FileDelete {
     
     // Delete folders
     
-    public static func deleteSubDirectory(directory:NSSearchPathDirectory, subdirectory:String) throws
+    public static func deleteSubDirectory(directory:FileManager.SearchPathDirectory, subdirectory:String) throws
     {
         // Remove unnecessary slash if need
-        let subDir = FileHelper.stripSlashIfNeeded(subdirectory)
+        let subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: subdirectory)
         
         // Create generic beginning to file delete path
         var deletePath = ""
         
-        if let direct = FileDirectory.applicationDirectory(directory),
-            path = direct.path {
+        if let direct = FileDirectory.applicationDirectory(directory: directory),
+            let path = direct.path {
                 deletePath = path + "/"
         }
         
@@ -54,7 +54,7 @@ public struct FileDelete {
         
         
         var dir:ObjCBool = true
-        let dirExists = NSFileManager.defaultManager().fileExistsAtPath(deletePath, isDirectory:&dir)
+        let dirExists = FileManager.default.fileExists(atPath: deletePath, isDirectory:&dir)
         if dir.boolValue == false {
             // FIXME: return error here
             return
@@ -67,7 +67,7 @@ public struct FileDelete {
         
         // Delete the file and see if it was successful
 
-        try NSFileManager.defaultManager().removeItemAtPath(deletePath)
+        try FileManager.default.removeItem(atPath: deletePath)
         
         
         
@@ -79,13 +79,13 @@ public struct FileDelete {
     public static func deleteSubDirectoryFromTemporaryDirectory(subdirectory:String) throws
     {
         // Remove unnecessary slash if need
-        let subDir = FileHelper.stripSlashIfNeeded(subdirectory)
+        let subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: subdirectory)
         
         // Create generic beginning to file delete path
         var deletePath = ""
         
         if let direct = FileDirectory.applicationTemporaryDirectory(),
-            path = direct.path {
+            let path = direct.path {
                 deletePath = path + "/"
         }
         
@@ -95,7 +95,7 @@ public struct FileDelete {
         
         
         var dir:ObjCBool = true
-        let dirExists = NSFileManager.defaultManager().fileExistsAtPath(deletePath, isDirectory:&dir)
+        let dirExists = FileManager.default.fileExists(atPath: deletePath, isDirectory:&dir)
         if dir.boolValue == false {
             // FIXME: throw error
             return
@@ -105,32 +105,27 @@ public struct FileDelete {
             return
         }
         
-        
         // Delete the file and see if it was successful
 
-        try NSFileManager.defaultManager().removeItemAtPath(deletePath)
-        
-        
+        try FileManager.default.removeItem(atPath: deletePath)
         
     }
     
-    
-    // private methods
     // private methods
     
-    private static func buildPath(path:String, inDirectory directory:NSSearchPathDirectory, subdirectory:String?) -> String  {
+    private static func buildPath(path:String, inDirectory directory:FileManager.SearchPathDirectory, subdirectory:String?) -> String  {
         // Remove unnecessary slash if need
-        let newPath = FileHelper.stripSlashIfNeeded(path)
+        let newPath = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: path)
         var subDir:String?
         if let sub = subdirectory {
-            subDir = FileHelper.stripSlashIfNeeded(sub)
+            subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: sub)
         }
         
         // Create generic beginning to file load path
         var loadPath = ""
         
-        if let direct = FileDirectory.applicationDirectory(directory),
-            path = direct.path {
+        if let direct = FileDirectory.applicationDirectory(directory: directory),
+            let path = direct.path {
                 loadPath = path + "/"
         }
         
@@ -139,24 +134,24 @@ public struct FileDelete {
             loadPath += "/"
         }
         
-        
         // Add requested load path
         loadPath += newPath
         return loadPath
     }
+    
     public static func buildPathToTemporaryDirectory(path:String, subdirectory:String?) -> String {
         // Remove unnecessary slash if need
-        let newPath = FileHelper.stripSlashIfNeeded(path)
+        let newPath = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: path)
         var subDir:String?
         if let sub = subdirectory {
-            subDir = FileHelper.stripSlashIfNeeded(sub)
+            subDir = FileHelper.stripSlashIfNeeded(stringWithPossibleSlash: sub)
         }
         
         // Create generic beginning to file load path
         var loadPath = ""
         
         if let direct = FileDirectory.applicationTemporaryDirectory(),
-            path = direct.path {
+            let path = direct.path {
                 loadPath = path + "/"
         }
         
@@ -165,14 +160,9 @@ public struct FileDelete {
             loadPath += "/"
         }
         
-        
         // Add requested save path
         loadPath += newPath
         return loadPath
     }
-    
-   
-    
-    
     
 }
